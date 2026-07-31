@@ -90,7 +90,7 @@ A single controlled value per Doctor, surfacing the non-Latin Doctors:
 
 Finer nuance (Antiochene vs Alexandrine formation, a Doctor who wrote in Greek
 but served a Western see) is carried in prose (`note` / `significance`), never
-multiplied into the enum. See §4, open question 3, for the one open
+multiplied into the enum. See §4, open question 4, for the one open
 assignment (Irenaeus).
 
 ## 3. Ordering
