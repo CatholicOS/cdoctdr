@@ -1,4 +1,3 @@
-import copy
 import unittest
 
 import generate_registry as gen
@@ -41,6 +40,9 @@ def sample_doc():
 
 class TestValidate(unittest.TestCase):
     def setUp(self):
+        self._orig = gen.DOCTOR_COUNT
+        gen.DOCTOR_COUNT = 2
+        self.addCleanup(setattr, gen, "DOCTOR_COUNT", self._orig)
         self.doc = sample_doc()
 
     def test_accepts_good_doc(self):
@@ -48,6 +50,12 @@ class TestValidate(unittest.TestCase):
 
     def test_rejects_wrong_count(self):
         self.doc["doctor_count"] = 3
+        with self.assertRaises(ValueError):
+            gen.validate(self.doc)
+
+    def test_rejects_wrong_total_count(self):
+        # Remove one entry so len(entries) becomes 1, violating DOCTOR_COUNT check
+        self.doc["entries"].pop()
         with self.assertRaises(ValueError):
             gen.validate(self.doc)
 
@@ -117,6 +125,9 @@ class TestValidate(unittest.TestCase):
 
 class TestRender(unittest.TestCase):
     def setUp(self):
+        self._orig = gen.DOCTOR_COUNT
+        gen.DOCTOR_COUNT = 2
+        self.addCleanup(setattr, gen, "DOCTOR_COUNT", self._orig)
         self.doc = sample_doc()
 
     def test_render_has_heading_and_all_ids(self):
@@ -129,6 +140,11 @@ class TestRender(unittest.TestCase):
         self.doc["entries"][0]["significance"] = "a | b"
         out = gen.render(self.doc)
         self.assertIn("a \\| b", out)
+
+
+class TestConstants(unittest.TestCase):
+    def test_doctor_count_is_38(self):
+        self.assertEqual(gen.DOCTOR_COUNT, 38)
 
 
 if __name__ == "__main__":

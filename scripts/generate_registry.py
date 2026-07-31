@@ -34,9 +34,8 @@ def load_data():
 
 def validate(doc):
     entries = doc.get("entries", [])
-    doctor_count = doc.get("doctor_count")
-    if doctor_count != len(entries):
-        raise ValueError(f"doctor_count {doctor_count} does not match entries length {len(entries)}")
+    if doc.get("doctor_count") != DOCTOR_COUNT or len(entries) != DOCTOR_COUNT:
+        raise ValueError(f"expected exactly {DOCTOR_COUNT} doctors")
 
     for e in entries:
         missing = [k for k in REQUIRED if k not in e]
@@ -45,10 +44,8 @@ def validate(doc):
             raise ValueError(f"{label}: missing required key(s) {missing}")
 
     # number contiguity (after presence guard so a missing key is a ValueError)
-    expected_range = list(range(1, len(entries) + 1))
-    actual_numbers = [e["number"] for e in entries]
-    if actual_numbers != expected_range:
-        raise ValueError(f"numbers must be contiguous 1..{len(entries)} in order")
+    if [e["number"] for e in entries] != list(range(1, DOCTOR_COUNT + 1)):
+        raise ValueError("numbers must be contiguous 1..38 in order")
 
     # entry order == ascending (declared_year, death_year)
     keys = [(e["declared_year"], e["death_year"]) for e in entries]
