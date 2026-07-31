@@ -141,6 +141,20 @@ class TestRender(unittest.TestCase):
         out = gen.render(self.doc)
         self.assertIn("a \\| b", out)
 
+    def test_render_no_literal_none_for_null_fields(self):
+        e = self.doc["entries"][0]
+        e["mr_ref"] = None
+        e["honorific_la"] = None
+        e["honorific_en"] = None
+        out = gen.render(self.doc)
+        self.assertNotIn("None", out)
+
+    def test_render_normalizes_newlines(self):
+        self.doc["entries"][0]["significance"] = "line one\nline two"
+        out = gen.render(self.doc)
+        self.assertNotIn("line one\nline two", out)
+        self.assertIn("line one line two", out)
+
 
 class TestConstants(unittest.TestCase):
     def test_doctor_count_is_38(self):

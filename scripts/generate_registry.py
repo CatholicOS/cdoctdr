@@ -81,10 +81,10 @@ def validate(doc):
 
 
 def _cell(value):
-    """Escape a value for a Markdown table cell."""
+    """Escape a value for a Markdown table cell, kept to one physical line."""
     if value is None:
         return ""
-    return str(value).replace("|", "\\|")
+    return re.sub(r"[\r\n]+", " ", str(value).replace("|", "\\|"))
 
 
 def _ref(value):
